@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+
+    <div class="container">
+        <form action="/addRSSfeed" method="POST">
+            Name: <input type="text" id="aNamet" name="aname"> <br>
+            rsslink: <input type="text" id="rssLinket" name="rssLink"> <br>
+            <select name="sektion" id="sektioner">
+                <option value="Kultur">Kultur</option>
+                <option value="Indland">Indland</option>
+                <option value="Udland">Udland</option>
+                <option value="Sport">Sport</option>
+                <option value="Økonomi">&Oslash;konomi</option>
+                <option value="Politik">Politik</option>
+                <option value="Debat">Debat</option>
+            </select><br>
+            Avis: <input type="text" id="avisen" name="avis"><br>
+            <select name="medietype" id="medieTyper">
+                <option value="Dagblad">Dagblad</option>
+                <option value="Ugeblad">Ugeblad</option>
+                <option value="TV">TV</option>
+                <option value="Fagblad">Fagblad</option>
+                <option value="Radio">Radio</option>
+            </select><br>
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    {% if title %}
+    <title>{{ title }} - Who's hot</title>
+    {% else %}
+    <title>Welcome to Who's hot</title>
+    {% endif %}
+    <!-- Bootstrap -->
+    <link rel="stylesheet" type="text/css" href="static/style/normalize.css">
+    <link href="static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <link rel="stylesheet" type="text/css" href="static/style/style.css">
+
+</head>
+    <body>
+
+
+        <nav class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="/">Who's Hot?</a>
+                </div>
+                <div id="navbar" class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/allFeeds">RssLinks</a></li>
+                        <li><a href="/addRSSfeed">Add RSS</a></li>
+                        <li><a href="/entities">Entities</a></li>
+                        <li><a href="/fetchRSS">Fetch RSS</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div class="container theme-showcase" role="main">
+                <div class="jumbotron">
+                    <h1>Who's hot this week?</h1>
+                    <p>longer text</p>
+                </div>
+
+
+
+                {% if overviewTitle %}
+                    <div class="page-header">
+                        <h2>{{overviewTitle}}</h2>
+                    </div>
+                {% else %}
+                    <div class="page-header">
+                        <h2>Overview</h2>
+                    </div>
+                {% endif %}
+
+
+                {% block content %}{% endblock %}
+
+
+        </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="static/bootstrap/js/bootstrap.min.js"></script>
+    </body>
+</html>

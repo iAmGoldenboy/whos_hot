@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+        <div class="row">
+            <div class="container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Medie</th>
+                        <th>Sektion</th>
+                        <th>Medie Type</th>
+                        <th>RSSLink</th>
+                        <th>Seneste Update</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for paper in data %}
+                        <tr>
+                            <td>{{ paper[0] }}</td>
+                            <td>{{ paper[1] }}</td>
+                            <td>{{ paper[2] }}</td>
+                            <td>{{ paper[3] }}</td>
+                            <td>{{ paper[4] }}</td>
+                        </tr>
+
+                    {% endfor %}
+                </tbody>
+            </table>
+                </div>
+        </div>
+
+
+    <div class="row">
+        <div class="container">
+        <h4>Add more RSS</h4>
+        <form action="/addRSSfeed" method="POST">
+            Name/ID: <input type="text" id="aNamet" name="aname"> <br>
+            Newspaper: <input type="text" id="avisen" name="avis"><br>
+            <select name="sektion" id="sektioner">
+                <option value="Kultur">Kultur</option>
+                <option value="Indland">Indland</option>
+                <option value="Udland">Udland</option>
+                <option value="Sport">Sport</option>
+                <option value="Økonomi">&Oslash;konomi</option>
+                <option value="Politik">Politik</option>
+                <option value="Debat">Debat</option>
+            </select><br>
+
+            <select name="medietype" id="medieTyper">
+                <option value="Dagblad">Dagblad</option>
+                <option value="Ugeblad">Ugeblad</option>
+                <option value="TV">TV</option>
+                <option value="Fagblad">Fagblad</option>
+                <option value="Radio">Radio</option>
+            </select><br>
+            rsslink: <input type="text" id="rssLinket" name="rssLink"> <br>
+            <input type="submit" value="Submit">
+        </form>
+            </div>
+    </div>
+
+{% endblock %}
