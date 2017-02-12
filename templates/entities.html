@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+        <div class="row">
+            <div class="container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Link</th>
+                            <th>Sektion</th>
+                            <th>Avis</th>
+                            <th><span style="font-size: .8em; line-height: 0.1;">Antal gange nævnt i hele artiklen</span></th>
+                            <th><span style="font-size: .8em; line-height: 0.1;">Antal gange nævnt i rubrikker og billedtekst</span></th>
+                            <th><span style="font-size: .8em; line-height: 0.1;">Antal gange nævnt i brødtekst</span></th>
+                            <th>Nyhedstrekant form</th>
+                            <th>Dato</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in data %}
+                            <tr>
+                                <td><a href="{{ item[2] }}">{{ item[2] }}</a></td>
+                                <td>{{ item[3] }}</td>
+                                <td>{{ item[4] }}</td>
+                                <td>{{ item[5] }}</td>
+                                <td>{{ item[6] }}</td>
+                                <td>{{ item[7] }}</td>
+                                <td>{{ item[8] }}</td>
+                                <td>{{ item[10] }}</td>
+                            </tr>
+
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+
+        </div>
+
+
+
+
+{% endblock %}

@@ -36,3 +36,37 @@ INSERT IGNORE INTO rss_feeds (name, rssLink, sektion, avis, medietype)
 VALUES ('k.dk-k', 'http://www.kristeligt-dagblad.dk/rss/kultur', 'Kultur', 'Kristeligt Dagblad', 'Dagblad');
 INSERT IGNORE INTO rss_feeds (name, rssLink, sektion, avis, medietype)
 VALUES ('information-i', 'https://www.information.dk/feed', 'Indland', 'Information', 'Dagblad');
+
+
+/*
+Alle nyheder
+http://www.dr.dk/nyheder/service/feeds/allenyheder
+
+Indland
+http://www.dr.dk/nyheder/service/feeds/indland
+
+Udland
+http://www.dr.dk/nyheder/service/feeds/udland
+
+Penge
+http://www.dr.dk/nyheder/service/feeds/penge
+
+Politik
+http://www.dr.dk/nyheder/service/feeds/politik
+
+Kultur
+http://www.dr.dk/nyheder/service/feeds/kultur
+
+Lev Nu
+http://www.dr.dk/nyheder/service/feeds/levnu
+
+Viden
+http://www.dr.dk/nyheder/service/feeds/viden
+
+Sporten
+http://www.dr.dk/nyheder/service/feeds/sporten
+
+Vejret
+http://www.dr.dk/nyheder/service/feeds/vejret
+
+*/

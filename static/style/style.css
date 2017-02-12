@@ -1,0 +1,25 @@
+
+p.userTip {
+    background: #fcfcfc none repeat scroll 0 0;
+    border: 1px solid #d1d1d1;
+    color: #bbb;
+    font-size: 0.9em;
+    padding: 8px 12px;
+}
+
+p.userTip:hover {
+    color: #000;
+}
+
+.userTip > a {
+    color: #888;
+    text-decoration: underline;
+}
+
+.userTip strong {
+    color: #a1a1a1;
+}
+
+p.userTip:hover, .userTip:hover strong, .userTip:hover > a {
+    color: #000;
+}

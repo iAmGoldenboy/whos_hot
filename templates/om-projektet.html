@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+        <div class="row">
+            <div class="container">
+                <p class="intro">Intro text</p>
+
+                <h2>Hvad kan man bruge det til?</h2>
+                <p></p>
+
+                <h2>Hvordan g&oslash;r man?</h2>
+                <p></p>
+
+                <h2>Hvem er du?</h2>
+                <p></p>
+
+                <h2>Hvorfor har du lavet det?</h2>
+                <p></p>
+                <h4>Hvorfor er det offentligt tilgengæligt?</h4>
+                <p>Jeg forestiller mig, at den her type system allerede findes og bruges i f.eks. markedsføringsøjemed.
+                Så min tanke er, at der sikkert er almindelig mennesker, som faktisk gerne vil følge bestemte personer, men har
+                svært ved at skrue ned for støjen og sidde og kigge med på alle medier. </p>
+
+                <h4>Men stjæler du ikke mediernes indhold?</h4>
+                <p>Tjenesten her er ikke meget anderledes end at google og andre søgemaskiner henter mediernes artikler og kører det
+                igennem en sorteringsmaskine. Mit fokus er mere snævert, på navne, og jeg vil også påstå at resultaterne
+                er mere transparante, idet du på et meget granulært niveau, kan se præcis hvor al data kommer fra. Så på den måde er projektet med til at skabe
+                overblik og filtrere.
+                Og for at vende den om, så er medierne også gået lidt amok med sporings af brugerne, hvor det er usikkert, hvor den data de gemmer om
+                dig og mig bliver brugt henne. Det er jo nok ikke kun hos de enkelte medier... så på den måde er medierne med til,
+                ved at de står for en stor del af web-trafik, med til at spore os alle sammen.</p>
+
+                <h2>Metode og andre tekniske ting</h2>
+                <p></p>
+
+                <h2>Småbrok</h2>
+                <p>Det undrer mig at medierne laver nogle i blandt weird tekniske løsninger, som god imod god skik på nettet.
+                Berlinske der kører med versioner af deres URL, det vil sige at næsten ens indhold findes flere steder på sitet.
+                Det vil ødelægge deres Google Juice, men endnu værre, så smider de støj ned i deres eget analyse system, idet det
+                bliver svært for dem at skille dubletterne ad.
+                http://www.b.dk/globalt/nordkorea-trodser-trump-ved-at-affyre-ballistisk-missil-0
+                og http://www.b.dk/globalt/nordkorea-trodser-trump-ved-at-affyre-ballistisk-missil-2</p>
+                <p>Man kan sige at folk kan unlike, noget, og de kan også un-share et link. Men det skere meget meget sjældent,
+                så det er ikke en logik jeg har taget højde for. Hvert link bliver tjekket for social media hits et par gange
+                i døgnet eller mere, og det kan man se på nogle grafer. Derimod, så vil der i visse tilfælde, når man henter et navn,
+                være tilfælde, hvor max (MAX()) ikke er helt rigtigt, på grund af at systemet kigger på højeste værdi, og ikke altid
+                seneste, som i teorien, kan være lavere.</p>
+
+                <h2>Planlagte tiltag</h2>
+                <p>Der vil langsomt blive lagt et lag semantik, så man kan filtrere efter (nogle) politikere, lande og evt. andre
+                egenskaber. Men det er komplekst fordi der kan findes flere ofter omtalte personer med samme navn, visse navne
+                er "sværre", man kan f.eks. hedde Sten til fornavn og Abe (Shinzo Abe) til efternavn, hvilket "fucker" lidt med semantikken.
+                Og så er der jo også det med stavefejl og </p>
+
+
+
+
+
+            </div>
+
+        </div>
+
+
+
+
+{% endblock %}

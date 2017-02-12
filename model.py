@@ -5,250 +5,235 @@ __datum__ = '29/01/17'
 import dbconfig
 import json
 import requests
-import string
+import schedule
 import xmltodict
 from bs4 import BeautifulSoup
+from bs4 import UnicodeDammit
 from collections import Counter
 from time import sleep
 from dbhelper import DBHelper
-from model_nlp import collectNamedEntities, extractNE, getTagContent
-
+from model_nlp import collectNamedEntities, extractNE, removeStopwordsFromString, scrubString, pruneNECollection, getKey2nd
+from model_lib import URLSnotInDatabase, extractHeaderText, extractImageText, extrapolateSocialMetrics, signal, keepThoseAboveQuartile, get_social_metrics
+from stats import quartiles
+from threading import Lock
 
 DB = DBHelper()
+lock = Lock()
 
 
-def gettingRSSes(feedList):
+def gettingRSSes(articlesToGet):
 
-    # print(feedList)
+    # print("getting these", articlesToGet)
+
     counter = 0
-    for feed in feedList:
-        print("feed: ", counter, " - ", feed[0], feed[1])
 
-        avis = feed[1]
-        counter += 1
-        feedsDict = None
+    with lock:
+        for feed in articlesToGet:
+            print("feed: ", counter, " - ", feed[0], feed[1], feed[2])
 
-        try:
-            # print("trying to get feed")
-            feedR = requests.get(feed[0])
-            # print("got feed", feedR)
-            feedsDict = xmltodict.parse(feedR.content, process_namespaces=True)
-            # print("da dict", feedsDict)
-        except Exception as e:
-            print("No feed: ", e)
+            articleLink = feed[0]
+            avis = feed[1]
+            sektion = feed[2]
 
-        if feedsDict:
-            # articleLink = ""
+
             try:
-                for feedItem in feedsDict["rss"]["channel"]["item"][:2]:
+                # save the article link in the database and get the article_id for future use.
+                article_id = DB.insertValuesReturnID('articleLinks', ['articleLink', 'sektion', 'avis'], [str(articleLink), str(sektion), str(avis)], 'articleLink', articleLink, 'article_id', returnID=True, printQuery=False)
 
-                    articleLink = feedItem["link"].replace("?referrer=RSS", "")
-                    print(avis, articleLink)
+                getLinkData = requests.get(articleLink)
+                soup = BeautifulSoup(getLinkData.content, "lxml")
 
-                    getLinkData = requests.get(articleLink)
-                    soup = BeautifulSoup(getLinkData.content, "lxml")
+                htmlTagsList = ['overskriftTag', 'underrubrikTag', 'billedtekstTag', 'introTag', 'brodtextTag', 'mellemrubrikTag', 'quoteTag']
 
-                    # htmlTagsList = ['overskriftTag', 'underrubrikTag', 'billedtekstTag', 'introTag', 'brodtextTag', 'mellemrubrikTag', 'quoteTag']
+                try:
+                    tagItem = None
 
-                    htmlTagsList = ['brodtextTag'] #, 'underrubrikTag', 'billedtekstTag', 'introTag', 'brodtextTag', 'mellemrubrikTag', 'quoteTag']
+                    NEbag = []
+                    NEhead = []
+                    NEtail = []
 
-                    try:
-                        tagItem = None
-                        for htmltag in htmlTagsList:
-                            # print("htmltag:", htmltag)
-                            tagItem = DB.getHTMLtags(avis, htmltag)
-                            print("Has tag", tagItem)
+                    for htmltag in htmlTagsList:
 
-                            if tagItem:
-                                tagOutput = []
+                        # Get the htmltags for this newspaper
+                        tagItem = DB.getHTMLtags(avis, htmltag)
 
+                        if tagItem:
+                            tagOutput = []
+
+                            try:
+                                # xtract text from each tagType.
+                                for singleTag in tagItem[0]:
+                                    tagContent = soup.select(singleTag)
+
+                                    for item in tagContent:
+                                        try:
+                                            if htmltag == 'billedtekstTag':
+                                                imgtext = extractImageText(item, htmltag)
+
+                                                if imgtext not in tagOutput:
+                                                    tagOutput.append(imgtext.replace(" og ", ", ").replace(" fra ", ", ").replace(" på ", ", ").replace(" til ", ", ").replace("\n", "").replace("  ", ""))
+
+                                            elif htmltag == "overskriftTag":
+                                                headerText = extractHeaderText(item.replace(" og ", ", ").replace(" fra ", ", ").replace(" på ", ", ").replace(" til ", ", ").replace("\n", "").replace("  ", ""))
+
+                                                if headerText not in tagOutput:
+                                                    tagOutput.append(headerText)
+
+                                            elif htmltag == "brodtextTag":
+                                                broedText = item.get_text().strip().replace(" og ", ", ").replace(" fra ", ", ").replace(" på ", ", ").replace(" til ", ", ").replace("\n", " ").replace("  ", "")
+
+                                                if broedText not in tagOutput:
+                                                    if "Læs også" not in broedText  or "/ritzau/" not in broedText or "Artiklen fortsætter under billedet" not in broedText or "Se også:" not in broedText:
+                                                        tagOutput.append(broedText)
+
+                                            else:
+                                                otherText = item.get_text().strip().replace(" og ", ", ").replace(" fra ", ", ").replace(" på ", ", ").replace(" til ", ", ").replace("\n", " ").replace("  ", "")
+
+                                                if otherText not in tagOutput:
+                                                    tagOutput.append(otherText)
+
+                                        except Exception as e:
+                                            pass
+
+                                # OK, now we have a list of sentences to go through. Let's do it!
                                 try:
+                                    for lines in tagOutput:
+                                        try:
+                                            # Remove stopwords and tokenize
+                                            tokenizeCleaned = removeStopwordsFromString(lines)
 
-                                    for singleTag in tagItem[0]:
-                                        tagContent = soup.select(singleTag)
+                                            # Extract named entities for the sentences.
+                                            sentenceNEs = extractNE(tokenizeCleaned)
 
-                                        for item in tagContent:
+                                            # If we have sentences to go through...
+                                            if sentenceNEs:
+                                                # ... add all to one big bag
+                                                [NEbag.append(neToken) for neToken in sentenceNEs]
 
-                                            # print("Checking {}".format( item ))
+                                                # Lets also split between bodycopy and headercopy (inkl. captions)
+                                                # When dealing with bodycopy, inline headlines and quotes add them to the NEtail list.
+                                                if htmltag == "brodtextTag" or htmltag == "mellemrubrikTag" or htmltag == "quoteTag":
+                                                    [NEtail.append(neToken) for neToken in sentenceNEs]
 
-                                            try:
-
-                                                if htmltag == 'billedtekstTag':
-
-                                                    imgtext = extractImageText(item, htmltag)
-
-                                                    if imgtext not in tagOutput:
-                                                        tagOutput.append(imgtext.replace("\n", "").replace("  ", ""))
-
-                                                elif htmltag == "overskriftTag":
-
-                                                    headerText = extractHeaderText(item.replace("\n", "").replace("  ", ""))
-                                                    # print(headerText)
-
-                                                    if headerText not in tagOutput:
-                                                        tagOutput.append(headerText)
-
-                                                elif htmltag == "brodtextTag":
-
-                                                    broedText = item.get_text().strip().replace("\n", " ").replace("  ", "").replace('"', '').replace("”", "").replace("»", "").replace("«", "")
-
-                                                    if broedText not in tagOutput:
-                                                        if "Læs også" not in broedText \
-                                                                or "/ritzau/" not in broedText \
-                                                                or "Artiklen fortsætter under billedet" not in broedText\
-                                                                or "Se også:" not in broedText:
-                                                            tagOutput.append(broedText)
-
+                                                # ... else they must be Header Copy and will be added to NEhead list
                                                 else:
-                                                    # print(item.get_text())
-                                                    print(" end of file...: {} {}".format(singleTag, item.get_text().strip() ))  #, item.get_text().strip())
-                                                    tagOutput.append(item.get_text().strip().replace("\n", "").replace("  ", "").replace("”", "").replace("»", "").replace("«", ""))
+                                                    [NEhead.append(neToken) for neToken in sentenceNEs]
 
-                                            except Exception as e:
-                                                print("Item tagcontent problem due to : ", e)
+                                        except Exception as e:
+                                            pass
 
-                                    # print("TagOutput: {}: {}".format(singleTag, tagOutput) )
-                                    try:
-                                        for lines in tagOutput:
-                                            # print("first NE's", extractNE(lines))
-
-                                            try:
-                                                tokenizeCleaned = getTagContent(lines)
-                                                sentenceNEs = extractNE(tokenizeCleaned)
-                                                if sentenceNEs:
-                                                    # print("NE's         ", sentenceNEs)
-                                                    print("NE's Count:  ", Counter(sentenceNEs))
-                                                    # print("tokenline        : ", tokenizeCleaned)
-                                                    # print("original line    : ", lines)
-                                            except Exception as e:
-                                                print("something went wrong here: ", e)
-
-
-                                                # frequency distribution matrix- tertile
-
-                                    except Exception as e:
-                                        print("couldnt get NEs due to: ", e )
+                                            # frequency distribution matrix- tertile
 
                                 except Exception as e:
-                                    print("Something went wrong : ", e)
+                                    print("couldnt get NEs due to: ", e )
 
-                            else:
-                                print("no tag")
-                                print()
-
-                    except Exception as e:
-                        print("unable to get tagitem", e)
-
+                            except Exception as e:
+                                print("Something went wrong : ", e)
+                        else:
+                            # print("entering the else clause...", feed[0], feed[1], feed[2], articleLink, "art_id", article_id, "tag", htmltag, "counter", counter, "tagitem", tagItem)
+                            pass
 
 
-                    sleep(2.5)
+                    # OK, good! Now we have three list with NE's. Lets start adding them to the database.
 
+                    # Lets first see what's in them
+                    # print("Shebang", NEbag)
+                    # print("Signals NE", signal(NEbag))
+                    # print("Signals Shape", signal(NEbag))
+                    # Nice! Lets see if we can get some data or numbers
+                    # print("NE BAG ALL COUNT:  ", keepThoseAboveQuartile(NEbag)) #, "\n", Counter(rePrune(NEbag)))
+                    # print("Signals HEAD", signal(NEhead))
+                    # print("NE BAG HEAD COUNT: ", keepThoseAboveQuartile(NEhead)) #, "\n",  Counter(rePrune(NEhead)))
+                    # print("Signals TAIL", signal(NEtail))
+                    # print("NE BAG TAIL COUNT: ", keepThoseAboveQuartile(NEtail)) #, "\n", Counter(rePrune(NEtail)) )
 
+                    keepAll = signal(NEbag)
+                    # for kNE in keepAll:
+                    #     try:
+                    #         testUnicode(kNE)
+                    #     except Exception as e:
+                    #         print("ee", kNE, e)
+
+                    keepHead = keepThoseAboveQuartile(NEhead)
+                    keepTail = keepThoseAboveQuartile(NEtail)
+
+                    # Go through all items and collect: count, headcount, tailcount, shape and article id.
+                    # Create a foaf list.
+                    # Insert each named entitiy in the database and get the ne_id, add all of it to a dict.
+
+                    collectNEdict = {}
+                    foafDict = {}
+
+                    fakeCounter = 0
+
+                    for neID, neData in keepAll.items():
+
+                        headCount, tailCount = 0, 0
+
+                        try:
+                            headCount = keepHead[neID]
+                        except Exception as e:
+                            pass
+                            # print("1 ikke fundet", e, keepHead)
+
+                        try:
+                            tailCount = keepTail[neID]
+                        except Exception as e:
+                            pass
+                            # print("2 ikke fundet", e, keepTail)
+
+                        # ne_id = DB.insertNamedEntity(neID)
+                        # Insert named entity into database
+                        neValues = [str(neID)]
+                        neoutput = DB.insertValuesReturnID('namedEntities', ['ne'], neValues, 'ne', neID, 'ne_id', mode="single", returnID=True, printQuery=False)
+
+                        ne2artFields = ['ne2art_ne_id', 'ne2art_art_id', 'neOccuranceCount', 'neOccuranceHead', 'neOccuranceTail', 'neOccurranceShape']
+                        nerartValues = [neoutput, article_id, neData.get("sum"), headCount, tailCount, str(neData.get("shape"))]
+
+                        ne2art_output = DB.insertValuesReturnID('namedEntity2Articles', ne2artFields, nerartValues, ['ne2art_ne_id', 'ne2art_art_id'], [neoutput, article_id], 'ne_id',  mode="ne2art", returnID=True, printQuery=False)
+
+                        # so update each ne and get row id, add ne and row_id to dict
+                        collectNEdict[neID] = {"ne_id" : neoutput,
+                                               "foaf_art_id": article_id,
+                                               "foaflist": [neT for neT in keepAll.keys() if neID != neT] }
+
+                        fakeCounter += 1
+
+                    foafFields = ['foaf_ne_id', 'foaf_knows_id', 'foaf_art_id']
+                    foafLookfor = ['foaf_ne_id', 'foaf_art_id']
+
+                    for neID, neData in collectNEdict.items():
+                        for foaf in neData.get("foaflist"):
+                            foafValues = [neData.get("ne_id"), collectNEdict[foaf].get("ne_id"), neData.get("foaf_art_id")]
+                            foaf_id = DB.insertValuesReturnID('foaf', foafFields, foafValues, foafLookfor, [neData.get("ne_id"), neData.get("foaf_art_id")], returnID=True, mode="foaf")
+
+                    # Collect Social Media data
+                    smDict = get_social_metrics(articleLink, pause=1)
+
+                    # Add social media data into a list
+                    SoMeCounter = extrapolateSocialMetrics(smDict)
+
+                    # if there is data, add it to the database
+                    SoMeCount = 0
+                    if len(SoMeCounter) > 0:
+                        for SoMes in SoMeCounter:
+                            # update database with article_id, enum value, SoMe count.
+                            DB.insertSocialMedia(article_id, SoMes[0], SoMes[1])
+                            SoMeCount += SoMes[1]
+
+                    print("Newspaper: {} / Sektion: {} / URL: {}".format(avis, sektion, articleLink) )
+                    print("Article ID: {} / No. of NEs: {} / No. of SoMe Instances: {} / SoMe count: {}".format(article_id, len(keepThoseAboveQuartile(NEbag)), len(SoMeCounter), SoMeCount) )
+
+                except Exception as e:
+                    print("unable to get tagitem", e)
+
+                # sleep(2.5)
             except Exception as e:
-                print("Kaboom", e)
+                print("SOMEthing went wrong due to   :   ", e)
+            print()
 
-            #     update lastUpdated
-        #         add links to database
+            counter += 1
 
-        sleep(3)
-
-def extractHeaderText(item):
-    headerText = ""
-
-    if item.get_text().strip()[len(item.get_text().strip())-1] not in string.punctuation:
-        headerText = item.get_text().strip().replace("\n", "").replace("  ", "")
-    else:
-        headerText = item.get_text().strip().replace("\n", "").replace("  ", " ")
-
-    return headerText
+            sleep(2.5)
 
 
-def extractImageText(imgtext, htmltag):
-
-    imagetext = imgtext.get_text().strip()
-
-    if "Foto:" in imgtext:
-
-        try:
-            imagetext = imgtext.get_text().strip().split("Foto:")[0]
-
-            if htmltag == 'billedtekstTag' and "REUTERS" in imgtext:
-                imagetext = imgtext.split("REUTERS")[0]
-
-        except Exception as e:
-            print("No 'Foto:' data due to :", e)
-
-    elif "Fotos:" in imgtext:
-
-        try:
-            imagetext = imgtext.get_text().strip().split("Fotos:")[0]
-
-        except Exception as e:
-            print("No 'Fotos:' data due to :", e)
-
-    return imagetext
-
-
-
-
-
-def get_social_metrics(url, pause=3):
-    api_key = dbconfig.apiKEY
-    formalcall = "{}{}{}{}".format( 'https://free.sharedcount.com/?url=', url , '&apikey=' , api_key )
-
-    dataDict = {}
-    try:
-        sharedcount_response = requests.get(formalcall)
-
-        sleep(pause)
-
-        if sharedcount_response.status_code == 200:
-            data = sharedcount_response.text
-            dataDict = dict(json.loads(data))
-            return dataDict
-
-    except Exception as e:
-        print("Moving onwards due to", e)
-        return dataDict
-
-
-def getSocialCount(socialDict, spread=True):
-
-    accumCount = 0
-    if spread and socialDict is not None:
-        # print(socialDict)
-
-        try:
-            for key, data in socialDict.items():
-                if isinstance(data, int):
-                    accumCount += data
-
-                elif key == "Facebook":
-                    accumCount += data.get("total_count")
-        except Exception as e:
-            print("Social Counter died:", e)
-
-    # print(accumCount)
-    return accumCount
-
-
-
-
-# def getTagContent(soup, avis, block):
-#
-#     output = []
-#
-#     try:
-#
-#         tagData = DB.getHTMLtags(avis,block)
-#         print(tagData[0])
-#
-#         for headTag in tagData[0]:
-#             headlineContent = soup.select(headTag)
-#             output.append(headlineContent[0].get_text().strip())
-#             print("block", block, headlineContent[0].get_text().strip())
-#             print("all__: ", headlineContent)
-#     except Exception as e:
-#         print("Could not get tag data due to: ", e)
-#
-#     return output

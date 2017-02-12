@@ -17,11 +17,11 @@
                 <tbody>
                     {% for paper in data %}
                         <tr>
-                            <td>{{ paper[0] }}</td>
                             <td>{{ paper[1] }}</td>
                             <td>{{ paper[2] }}</td>
+                            <td>{{ paper[5] }}</td>
+                            <td>{{ paper[0] }}</td>
                             <td>{{ paper[3] }}</td>
-                            <td>{{ paper[4] }}</td>
                         </tr>
 
                     {% endfor %}
@@ -33,7 +33,7 @@
 
     <div class="row">
         <div class="container">
-        <h4>Add more RSS</h4>
+        <!-- h4>Add more RSS</h4>
         <form action="/addRSSfeed" method="POST">
             Name/ID: <input type="text" id="aNamet" name="aname"> <br>
             Newspaper: <input type="text" id="avisen" name="avis"><br>
@@ -56,7 +56,7 @@
             </select><br>
             rsslink: <input type="text" id="rssLinket" name="rssLink"> <br>
             <input type="submit" value="Submit">
-        </form>
+        </form-->
             </div>
     </div>
 

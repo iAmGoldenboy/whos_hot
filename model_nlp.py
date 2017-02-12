@@ -15,7 +15,7 @@ import time
 import nltk
 from nltk.collocations import *
 
-udvidestopwords = ["ham", "derfor", "seks", "begge", "dermed", "arkivfoto", "kan", "endnu", "modtag e-mail", "anmeldelse", "måske", "følg", "dengang", "live", "berlingske", "anmeldelse", "ja", "nej", "ritzau", "reuters" "kun", "læs", "foto", "siger", "sagde", "mente", "mens", "både", "desuden", "eksperter", "ifølge", "føler", "følte", "flere", "mange", "udover", "samlet", "mener", "fortæller", "håber", "så", "altså", "hvem", "hvad", "hvor", "hvorfor", "hvordan", "hvilket", "hvilken", "tror", "troede"]
+udvidestopwords = ["ham", "derfor", "seks", "begge", "dermed", "reuters", "hvornår", "inden", "hele", "selvom", "læserbrev", "mon", "kom", "tag", "ingen", "herunder", "især", "sagen", "allerede", "sidste", "første", "selvfølgelig", "heldigvis", "hver", "arkivfotoFoto", "arkivfoto", "kan", "endnu", "modtag e-mail", "anmeldelse", "måske", "følg", "dengang", "live", "berlingske", "anmeldelse", "ja", "nej", "ritzau", "reuters" "kun", "læs", "foto", "siger", "sagde", "mente", "mens", "både", "desuden", "eksperter", "ifølge", "føler", "følte", "flere", "mange", "udover", "samlet", "mener", "fortæller", "håber", "så", "altså", "hvem", "hvad", "hvor", "hvorfor", "hvordan", "hvilket", "hvilken", "tror", "troede", 'tekst', 'cccfoto', 'afp', 'politiken', 'send', 'journalist', 'offer', 'mest', 'drop', 'fyren', 'gode', 'selvmål', 'tvertimod', 'tværtimod', 'først', 'skrev', 'hverken', 'ligesom', 'blinkFoto', 'bagud', 'aldrig', 'samtidig', 'beslutningen', 'siden', 'alligevel', 'tak', 'nemlig', 'film', 'planen', 'samtidig', 'igennem', 'dér', 'fordi', 'pludselig', 'stejlt', 'enten', 'indtast', 'tilbuddet', 'må', 'måtte', 'skuespiller', 'forsøger', 'syg', 'halvsløje', 'testen', 'ved', 'sidst', 'lige', 'titlen', 'udsolgt', 'faldet', 'imidlertid', 'overblik', 'allerhelst', 'ændringen', 'årsagen', 'efterfølgende', 'udsat', 'tilbudet', 'uden', 'historien', 'herfra', 'ansvaret', 'næste', 'forestil', 'dagen', 'fjerde', 'uanset', 'endelig', 'netop', 'minderne', 'næste', 'ideen', 'idéen', 'kendsgerningerne', 'tankerne', 'foreløbig', 'lige', 'overfor', 'uden', 'uheldet', 'heldet', 'lugten', 'turen', 'moderne', 'tiltrængte', 'intet', 'oplevelsen', 'svaret', 'debat', 'synd', 'moderne', 'selvet', 'senest', 'børn', 'pligten', 'ansvaret', 'helst', 'pludseligt', 'stilhed', 'små', 'historien', 'desværre', 'håbløshed', 'forestillingen', 'håbløsheden', 'således', 'brug', 'slået', 'ejeren', 'farlig', 'sidstnævnte', 'parret', 'derefter', 'imidlertid', 'forleden', 'mere', 'voksende', 'ulovlig', 'familie', 'sammenlignet', 'forskellen', 'gør', 'absolut', 'bestemt', 'dernæst', 'dertil', 'præcis', 'satser', 'mulig', 'blandt', 'gruppen', 'se', 'ekstra', 'usædvanlig', 'faktisk', 'udnævne', 'arkiv', 'svaret', 'problemet', 'iført', 'søger', 'stoffet', 'undersøgelse', 'lækkede', 'tilsyneladende']
 dk_Stopwords = stopwords.words('danish') + udvidestopwords
 dk_tokenizer = nltk.data.load("tokenizers/punkt/danish.pickle")
 dk_Stemmer = SnowballStemmer('danish')
@@ -251,54 +251,46 @@ def removeStopwords(stringToREMOVEstopwordsFrom):
 
 def scrubString(string):
 
-    cleanString = string.strip().replace("  ", " ").replace("»", "").replace("’"," ").replace(":", " . ").replace("«", "").replace("\n", "").replace('"', "").replace("'", " ")
+    cleanString = string.strip().replace("  ", " ").replace("»", " ").replace("’"," ").replace("”", " , ").replace(":", " . ").replace("«", " ").replace("\n", " ").replace('"', " ").replace("'", " ")
 
     return cleanString
 
 
 
 
-def getTagContent(sentenceList):
+def removeStopwordsFromString(sentenceList):
+    """
+    :param sentenceList: sentence string
+    :return: sentence string with no stopwords.
+    """
 
-    # if isinstance(tagList, str):
-    #     tagList = [tagList]
-    #
     finalOutput = []
-    # for tag in tagList:
-
-    # getTagSoup = soup.select(tag)
+    sentencesChunks = False
 
     try:
         contents = scrubString(sentenceList)
         sentencesChunks = dk_tokenizer.tokenize(contents)
     except Exception as e:
-        print("nope", e)
+        print("removeStopwordsFromString error: Could not scrub or chunk sentences due to : ", e)
 
+    if sentencesChunks:
+        output = []
+        for sentence in sentencesChunks:
 
-    output = []
-    for sentence in sentencesChunks:
-        # sentencesList = dk_tokenizer.tokenize(sentences)
+            sentenceNoStopwords = []
 
-        # for sentence in sentencesList:
-        sentenceNoStopwords = []
-        # keepPunkt = ""
-        # if sentence[len(sentence)-1:] in string.punctuation:
-        #     keepPunkt += sentence[len(sentence)-1:]
+            try:
+                for token in word_tokenize(sentence, language="danish"):
+                    if token.lower() not in dk_Stopwords:
+                        sentenceNoStopwords.append(token.strip())
 
-        try:
-            for token in word_tokenize(sentence, language="danish"):
-                if token.lower() not in dk_Stopwords:
-                    sentenceNoStopwords.append(token.strip())
+                sentenceClear = " ".join(sentenceNoStopwords).strip()
+                output.append(sentenceClear)
 
-            sentenceClear = " ".join(sentenceNoStopwords).strip()
-            # print("Sentence clear", sentenceClear)
-            output.append(sentenceClear)
-        except Exception as e:
-            print("token errors:", e)
+            except Exception as e:
+                print("removeStopwordsFromString error: could not remove stopwords due to :", e)
 
-    finalOutput.append(" ".join(output))
-    # print("output", output)
-    # print("finaloutput", finalOutput)
+        finalOutput.append(" ".join(output))
 
     return " ".join(finalOutput)
 
@@ -344,24 +336,25 @@ def shouldInclude(wordstring):
 
 def pruneNECollection(listItems):
 
+    # print("     listitems", listItems)
     seenList = []
     removeDict = {}
     for item in listItems:
         for reversedItem in sorted(listItems, reverse=True):
             score = fuzz.ratio(item, reversedItem)
-            if score > 85 and score < 100 and reversedItem[1] not in seenList:
-                #print(score, item, reversedItem)
+            if score > 90 and score < 100 and reversedItem[1] not in seenList:
+                # print(score, item, reversedItem)
                 shortest = list([item, reversedItem])
-                #print(shortest)
+                # print(shortest)
                 removeIt = sorted(list(shortest), reverse=True)[0][1]
                 keep = sorted(list(shortest), reverse=True)[1][1]
-                #print(removeIt, keep)
-                seenList.append(removeIt[1])
+                # print("R-K", removeIt, " -> ", keep)
+                seenList.append(removeIt)
                 try:
-                    removeDict[removeIt[1]] = keep[1]
+                    removeDict[removeIt] = keep
                 except Exception as e:
                     pass
-                # print(removeDict)
+                # print("remove dict", removeDict)
 
     counter = 0
     newlist, deadstuff = [], []
@@ -369,6 +362,7 @@ def pruneNECollection(listItems):
     for itemkey in listItems:
 
         if removeDict.get(itemkey[1]):
+            # print("found itemkey", itemkey)
             try:
                 for rounds in range(int(itemkey[0])):
                     newlist.append(removeDict.get(itemkey[1]))
@@ -388,6 +382,7 @@ def pruneNECollection(listItems):
 
         counter += 1
 
+    # print("newlist", newlist)
     return newlist
 
 def getCollocations(stringContent):
@@ -458,7 +453,7 @@ def extractNE(textData, verbose=False):
     collocationsList = [" ".join(bits for bits in chunk) for chunk in getCollocations(textData)]
 
     # and extract named entities from collocations
-    NEcollocations = collectNamedEntities(" - ".join(collocationsList))
+    NEcollocations = collectNamedEntities(" - ".join(collocationsList))  + nltkGit(" - ".join(collocationsList))
 
     # Extract the named entities via two methods
     NEcollection = collectNamedEntities(textData) + nltkGit(textData)
@@ -470,7 +465,7 @@ def extractNE(textData, verbose=False):
     NEcounter = [[data, id] for id, data in Counter(mergedNEs).items()]
 
     # Prune the NEcounter object to remove dublicates (could refine this mor)
-    NEdata = pruneNECollection(NEcounter)
+    NEdata =  pruneNECollection(NEcounter)
 
     if verbose:
         print("Newlist      ",  Counter(NEdata))
