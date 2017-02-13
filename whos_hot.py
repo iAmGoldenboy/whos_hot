@@ -98,6 +98,7 @@ def hotteNavne():
         print("feed error: ", intervalTime, intervalTimeType, limit, " --- due to : ", e)
         feeds = []
 
+    barData = []
     try:
         barData = [feedItem[3] for feedItem in feeds]
     except Exception as e:
@@ -140,7 +141,7 @@ def showEntities():
         print("feed error: ", neName, neID, limit, " --- due to : ", e)
         feeds = []
 
-    return render_template("entities.html", data=feeds, title=neName, overviewTitle="{} har {} entries".format(neName, len(feeds)))
+    return render_template("entities.html", data=feeds, title=neName, overviewTitle="{} har {} entries".format(neName, len(feeds), baseURL))
 
 
 
@@ -163,28 +164,28 @@ def outputFEEDURLS():
     rssLinks = outputRSSLINKS()
     return URLSnotInDatabase(rssLinks)
 
-def processRSSes():
-
-    # pass
-    # feeds = DB.getRSSlinks()
-    # articlesToGet = URLSnotInDatabase(feeds)
-
-    # print(feeds)
-
-    with lock:
-        gettingRSSes(outputFEEDURLS())
-        print("Running periodic task!")
-        print("Elapsed time: " + str(time.time() - start_time))
+# def processRSSes():
+#
+#     # pass
+#     # feeds = DB.getRSSlinks()
+#     # articlesToGet = URLSnotInDatabase(feeds)
+#
+#     # print(feeds)
+#
+#     with lock:
+#         gettingRSSes(outputFEEDURLS())
+#         print("Running periodic task!")
+#         print("Elapsed time: " + str(time.time() - start_time))
 
 # https://github.com/dbader/schedule
-def runningSchedule():
-    schedule.every(15.23456).minutes.do(processRSSes)
-    # schedule.every(1).minutes.do(fetchRSS())
-    # schedule.every(30).minutes.do(updatingSocialMedia)
-
-    while True:
-        schedule.run_pending()
-        sleep(1)
+# def runningSchedule():
+#     schedule.every(15.23456).minutes.do(processRSSes)
+#     # schedule.every(1).minutes.do(fetchRSS())
+#     # schedule.every(30).minutes.do(updatingSocialMedia)
+#
+#     while True:
+#         schedule.run_pending()
+#         sleep(1)
 
 # def run_every_10_seconds():
 #     print("Running periodic task!")
