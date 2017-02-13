@@ -7,6 +7,9 @@ from dbhelper import DBHelper
 from flask import Flask
 from flask import render_template, url_for
 from flask import request
+from bs4 import BeautifulSoup
+import requests
+import xmltodict
 from model import gettingRSSes
 import schedule
 from time import sleep
@@ -43,6 +46,59 @@ def allFeeds():
     # myline = "whats up"
     return render_template("feeds/allFeeds.html", data=feeds, title="RSS Feeds", overviewTitle="RSS Feeds i systemet")
 
+@app.route("/fetchafeeds")
+def fetchafeeds():
+
+    output = "hej"
+
+    feeds = None
+    try:
+        feeds = DB.getRSSlinks()
+    except Exception as e:
+        print("feed error: ", e)
+        feeds = None
+
+    output = [feed for feed in feeds[:2]]
+
+    lookat = []
+    for out in output:
+        articleLink = out[0]
+        avis = out[1]
+        sektion = out[2]
+        lookat.append([articleLink, avis, sektion])
+
+    knowarticles = []
+    for look in lookat:
+        feedR = requests.get(look[0])
+        feedsDict = xmltodict.parse(feedR.content, process_namespaces=True)
+        sleep(2)
+
+        for rssItem in feedsDict["rss"]["channel"]["item"]:
+            articleLink = rssItem["link"].replace("?referrer=RSS", "")
+            knowarticles.append(articleLink)
+
+    headlines = []
+    for article in knowarticles[:4]:
+        soup=""
+        try:
+            getLinkData = requests.get(article)
+            soup = BeautifulSoup(getLinkData.content, "lxml", from_encoding="utf-8")
+        except Exception as e:
+            print("No soup", e)
+
+        try:
+            tagContent = soup.select(".article-header__title")
+            headlines.append(tagContent)
+            print(tagContent)
+        except Exception as e:
+            print("No tags", e,)
+
+        sleep(3)
+
+
+
+
+    return render_template("feeds/fetchfeeds.html", output=output, lookat=lookat, knowarticles=knowarticles, headlines=headlines)
 
 # @app.route("/addRSSfeed", methods=['POST'])
 # def submitRSS():
@@ -202,7 +258,7 @@ if __name__ == "__main__":
     # t = Thread(target=runningSchedule)
     # t.start()
     # print("Start time: " + str(start_time))
-    app.run()
+    app.run(debug=True)
 
 
 
