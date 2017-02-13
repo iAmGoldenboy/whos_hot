@@ -131,7 +131,7 @@ def gettingRSSes(articlesToGet):
                     # OK, good! Now we have three list with NE's. Lets start adding them to the database.
 
                     # Lets first see what's in them
-                    # print("Shebang", NEbag)
+                    print("Shebang", NEbag)
                     # print("Signals NE", signal(NEbag))
                     # print("Signals Shape", signal(NEbag))
                     # Nice! Lets see if we can get some data or numbers
