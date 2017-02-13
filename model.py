@@ -3,19 +3,14 @@ __author__ = 'Miklas Njor - iAmGoldenboy - http://miklasnjor.com'
 __projectname__ = 'whos_hot / model.py'
 __datum__ = '29/01/17'
 
-import dbconfig
-import json
 import requests
 import schedule
-import xmltodict
+
 from bs4 import BeautifulSoup
-from bs4 import UnicodeDammit
-from collections import Counter
 from time import sleep
 from dbhelper import DBHelper
 from model_nlp import collectNamedEntities, extractNE, removeStopwordsFromString, scrubString, pruneNECollection, getKey2nd
 from model_lib import URLSnotInDatabase, extractHeaderText, extractImageText, extrapolateSocialMetrics, signal, keepThoseAboveQuartile, get_social_metrics
-from stats import quartiles
 from threading import Lock
 
 DB = DBHelper()

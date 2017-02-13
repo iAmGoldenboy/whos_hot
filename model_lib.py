@@ -10,7 +10,6 @@ from time import sleep
 import random
 import string
 from model_nlp import scrubString, pruneNECollection
-
 import dbconfig
 from collections import Counter
 import json
