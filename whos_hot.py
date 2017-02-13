@@ -25,8 +25,8 @@ def home():
     return render_template("base.html", title=welcome, overviewTitle=welcome)
 
 @app.route("/subdeck/here")
-def home():
-    welcome = "Welcome to Python Flask Appss!"
+def here():
+    welcome = "subdeck here!"
     return render_template("base.html", title=welcome, overviewTitle=welcome)
 
 @app.errorhandler(404)
