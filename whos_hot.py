@@ -60,6 +60,8 @@ def fetchafeeds():
 
     output = [feed for feed in feeds[:2]]
 
+    print("output 1", output)
+
     lookat = []
     for out in output:
         articleLink = out[0]
@@ -67,6 +69,7 @@ def fetchafeeds():
         sektion = out[2]
         lookat.append([articleLink, avis, sektion])
 
+    print("Lookat 1", lookat)
     knowarticles = []
     for look in lookat:
         feedR = requests.get(look[0])
@@ -75,26 +78,33 @@ def fetchafeeds():
 
         for rssItem in feedsDict["rss"]["channel"]["item"]:
             articleLink = rssItem["link"].replace("?referrer=RSS", "")
+            print("article link", articleLink)
             knowarticles.append(articleLink)
+
+    print("knownarticles 1", knowarticles)
 
     headlines = []
     for article in knowarticles[:4]:
         soup=""
         try:
+            print("Trying to get soup")
             getLinkData = requests.get(article)
             soup = BeautifulSoup(getLinkData.content, "lxml", from_encoding="utf-8")
+            print("Got soup")
         except Exception as e:
             print("No soup", e)
 
         try:
+            print("trying to get header")
             tagContent = soup.select(".article-header__title")
             headlines.append(tagContent)
-            print(tagContent)
+            print("tagContent 1", tagContent)
         except Exception as e:
             print("No tags", e,)
 
         sleep(3)
 
+    print("Headlines 1", headlines)
 
 
 
