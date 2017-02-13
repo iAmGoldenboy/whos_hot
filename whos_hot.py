@@ -70,6 +70,7 @@ def fetchafeeds():
         lookat.append([articleLink, avis, sektion])
 
     print("Lookat 1", lookat)
+
     knowarticles = []
     for look in lookat:
         feedR = requests.get(look[0])
@@ -89,7 +90,7 @@ def fetchafeeds():
         try:
             print("Trying to get soup")
             getLinkData = requests.get(article)
-            soup = BeautifulSoup(getLinkData.content, "lxml", from_encoding="utf-8")
+            soup = BeautifulSoup(getLinkData.content, "lxml")
             print("Got soup")
         except Exception as e:
             print("No soup", e)
