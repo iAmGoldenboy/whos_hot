@@ -9,7 +9,8 @@
     <!-- link rel="stylesheet" type="text/css" href="static/style/normalize.css" -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style/normalize.css') }}">
     <!-- link href="static/bootstrap/css/bootstrap.min.css" rel="stylesheet" -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='style/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/lib/bootstrap/css/bootstrap.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/lib/bootstrap/css/bootstrap-theme.css') }}">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -19,6 +20,7 @@
 
     <![endif]-->
     <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script src="{{ url_for('static', filename='style/lib/bootstrap/js/bootstrap.js') }}" charset="utf-8"></script>
     <!-- link rel="stylesheet" type="text/css" href="static/style/style.css" -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style/style.css') }}">
     <title>{% if title %} {{ title }} {% endif %} - Who Hot</title>
