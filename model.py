@@ -62,7 +62,7 @@ def gettingRSSes(articlesToGet):
                                 for singleTag in tagItem[0]:
                                     tagContent = soup.select(singleTag)
 
-                                    print("tag content", tagContent.encode("utf-8"))
+                                    print("tag content", tagContent)
 
                                     for item in tagContent:
                                         try:

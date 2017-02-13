@@ -7,6 +7,7 @@
     {% block head %}
     <!-- Bootstrap -->
     <!-- link rel="stylesheet" type="text/css" href="static/style/normalize.css" -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/normalize.css') }}">
     <!-- link href="static/bootstrap/css/bootstrap.min.css" rel="stylesheet" -->
     <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
 
@@ -50,13 +51,9 @@
                 <div id="navbar" class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
                         <li><a href="/">Home</a></li>
-                        <li><a href="/hotte-navne">Hotte Navne</a></li>
-                        <li><a href="/allFeeds">RssLinks</a></li>
-                        <!--li><a href="/addRSSfeed">Add RSS</a></li-->
-                        <li><a href="/entities">Entities</a></li>
-                        <li><a href="/fetchRSS">Fetch RSS</a></li>
+
                         <li><a href="/om-projektet">Om Projektet</a></li>
-                        <li>{{ url_for('static', filename='style/style.css') }}</li>
+                        <li><p>{{ url_for('static', filename='style/style.css') }}</p></li>
                     </ul>
                 </div>
             </div>
