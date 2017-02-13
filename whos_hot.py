@@ -15,7 +15,7 @@ from model_lib import URLSnotInDatabase
 import time
 
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='whos_hot/static')
 start_time = time.time()
 DB = DBHelper()
 
