@@ -196,7 +196,7 @@ if __name__ == "__main__":
     # t = Thread(target=runningSchedule)
     # t.start()
     # print("Start time: " + str(start_time))
-    app.run(port=5000, debug=True)
+    app.run()
 
 # /* if newSMcount > (previousSMcount * 2), then add to top of sharedCount que. */
 # /addRSS / update /removeRSS

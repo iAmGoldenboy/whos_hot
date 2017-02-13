@@ -51,14 +51,12 @@ def URLSnotInDatabase(feeds):
             try:
                 for rssItem in feedsDict["rss"]["channel"]["item"]:
                     articleLink = rssItem["link"].replace("?referrer=RSS", "")
-                    print("art link", articleLink)
+                    # print("art link", articleLink)
 
                     ishere = DB.checkArticelLinkExistance(articleLink)
 
                     try:
-                        if feedItem[1] == "Berlingske Tidende":
-                            print("       *** *** from BERL: ", articleLink)
-                            print("    dalink", articleLink, articleLink[:len(articleLink)-2])
+                        if feedItem[1] == "Berlingske Tidende" or feedItem[1] == "BT":
                             end = articleLink[len(articleLink)-2:]
                             berlList = ["-0", "-1", "-2", "-3", "-4", "-5", "-6"]
                             if end in berlList:
@@ -69,7 +67,7 @@ def URLSnotInDatabase(feeds):
 
                     if len(ishere) == 0 and articleLink not in seenlist:
                         # then add to list
-                        print(" ---> is here", len(ishere), articleLink)
+                        # print(" ---> is here", len(ishere), articleLink)
 
                         URLs2scrape.append([articleLink, feedItem[1], feedItem[0]])
                         seenlist.append(articleLink)
