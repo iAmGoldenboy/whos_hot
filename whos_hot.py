@@ -101,7 +101,8 @@ def fetchafeeds():
             tagThing = ".article-header__title"
             print("TH", type(tagThing))
             tagContent = soup.select(tagThing)
-            print("tagcontent type", type(tagContent))
+            tagContent_2 = soup.find_all(tagThing)
+            print("tagcontent type", type(tagContent), tagContent_2)
             for item in tagContent:
                 headlines.append(tagContent)
             print("tagContent 1", tagContent)
