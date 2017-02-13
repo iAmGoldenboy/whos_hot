@@ -10,11 +10,11 @@ from flask import request
 from model import gettingRSSes
 import schedule
 from time import sleep
-from threading import Thread, Lock
+
 from model_lib import URLSnotInDatabase
 import time
 
-lock = Lock()
+
 app = Flask(__name__)
 start_time = time.time()
 DB = DBHelper()

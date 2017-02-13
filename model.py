@@ -4,8 +4,6 @@ __projectname__ = 'whos_hot / model.py'
 __datum__ = '29/01/17'
 
 import requests
-import schedule
-
 from bs4 import BeautifulSoup
 from time import sleep
 from dbhelper import DBHelper
