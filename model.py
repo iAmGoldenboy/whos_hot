@@ -34,8 +34,11 @@ def gettingRSSes(articlesToGet):
                 # save the article link in the database and get the article_id for future use.
                 article_id = DB.insertValuesReturnID('articleLinks', ['articleLink', 'sektion', 'avis'], [str(articleLink), str(sektion), str(avis)], 'articleLink', articleLink, 'article_id', returnID=True, printQuery=False)
 
+                print("the article link is {} and the id is {}".format(articleLink, article_id))
                 getLinkData = requests.get(articleLink)
                 soup = BeautifulSoup(getLinkData.content, "lxml")
+
+                print("soup de soup ---> ", soup)
 
                 htmlTagsList = ['overskriftTag', 'underrubrikTag', 'billedtekstTag', 'introTag', 'brodtextTag', 'mellemrubrikTag', 'quoteTag']
 
@@ -58,6 +61,8 @@ def gettingRSSes(articlesToGet):
                                 # xtract text from each tagType.
                                 for singleTag in tagItem[0]:
                                     tagContent = soup.select(singleTag)
+
+                                    print("tag content", tagContent)
 
                                     for item in tagContent:
                                         try:
@@ -87,7 +92,7 @@ def gettingRSSes(articlesToGet):
                                                     tagOutput.append(otherText)
 
                                         except Exception as e:
-                                            pass
+                                            print("Error with tag ", item, "due to ", e)
 
                                 # OK, now we have a list of sentences to go through. Let's do it!
                                 try:
