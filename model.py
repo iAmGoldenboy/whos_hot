@@ -167,19 +167,19 @@ def gettingRSSes(articlesToGet):
                         try:
                             headCount = keepHead[neID]
                         except Exception as e:
-                            pass
-                            # print("1 ikke fundet", e, keepHead)
+                            # pass
+                            print("1 ikke fundet", e, keepHead)
 
                         try:
                             tailCount = keepTail[neID]
                         except Exception as e:
-                            pass
-                            # print("2 ikke fundet", e, keepTail)
+                            # pass
+                            print("2 ikke fundet", e, keepTail)
 
                         # ne_id = DB.insertNamedEntity(neID)
                         # Insert named entity into database
                         neValues = [str(neID)]
-                        neoutput = DB.insertValuesReturnID('namedEntities', ['ne'], neValues, 'ne', neID, 'ne_id', mode="single", returnID=True, printQuery=False)
+                        neoutput = DB.insertValuesReturnID('namedEntities', ['ne'], neValues, 'ne', neID, 'ne_id', mode="single", returnID=True, printQuery=True)
 
                         ne2artFields = ['ne2art_ne_id', 'ne2art_art_id', 'neOccuranceCount', 'neOccuranceHead', 'neOccuranceTail', 'neOccurranceShape']
                         nerartValues = [neoutput, article_id, neData.get("sum"), headCount, tailCount, str(neData.get("shape"))]
@@ -199,8 +199,8 @@ def gettingRSSes(articlesToGet):
                     for neID, neData in collectNEdict.items():
                         for foaf in neData.get("foaflist"):
                             foafValues = [neData.get("ne_id"), collectNEdict[foaf].get("ne_id"), neData.get("foaf_art_id")]
-                            foaf_id = DB.insertValuesReturnID('foaf', foafFields, foafValues, foafLookfor, [neData.get("ne_id"), neData.get("foaf_art_id")], returnID=True, mode="foaf")
-
+                            foaf_id = DB.insertValuesReturnID('foaf', foafFields, foafValues, foafLookfor, [neData.get("ne_id"), neData.get("foaf_art_id")], returnID=True, mode="foaf", printQuery=True)
+                            print(neID, neData, foaf, foaf_id)
                     # Collect Social Media data
                     smDict = get_social_metrics(articleLink, pause=1)
 
