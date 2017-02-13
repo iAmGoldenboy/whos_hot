@@ -139,6 +139,7 @@ class DBHelper:
         connection = self.connect()
         try:
             query = """INSERT INTO namedEntities(ne) VALUES('{}');""".format(namedEntity)
+            print("insert NE -> ", query)
             with connection.cursor() as cursor:
                 cursor.execute(query)
             connection.commit()
@@ -222,6 +223,7 @@ class DBHelper:
         connection = self.connect()
         try:
             query = """INSERT INTO articleLinks (articleLink, sektion, avis) VALUES ('{}', '{}', '{}');""".format(articleLink, sektion, avis)
+            print("insert articleLink", query)
             with connection.cursor() as cursor:
                 cursor.execute(query)
                 lastID = cursor.lastrowid
@@ -243,6 +245,7 @@ class DBHelper:
         connection = self.connect()
         try:
             query = """INSERT INTO namedEntities (ne) VALUES ('{}');""".format(ne)
+            print("insertNamedEntity -> " , query)
             with connection.cursor() as cursor:
                 cursor.execute(query)
                 lastID = cursor.lastrowid
@@ -269,7 +272,7 @@ class DBHelper:
             WHERE NOT EXISTS (
                 SELECT socialMedia_art_id, socialMediaID, socialMediaCount FROM articleSocialMediaCount WHERE socialMedia_art_id = {} AND socialMediaID = '{}' AND socialMediaCount = {}
             ) LIMIT 1;""".format(article_id, enumValue, count, article_id, enumValue, count)
-            # print(query)
+            print("insertSocialMedia -> ", query)
             with connection.cursor() as cursor:
                 cursor.execute(query)
             connection.commit()
@@ -294,6 +297,8 @@ class DBHelper:
             else:
                 query = """SELECT {}, {} FROM {} WHERE {} = {} AND {} = {};""".format(id_field[0], id_field[1], table, id_field[0], item[0], id_field[1], item[1] )
             # SELECT ne_id FROM namedEntities WHERE ne='some name';
+
+            print("getItemID", query)
             with connection.cursor() as cursor:
                 cursor.execute(query)
             return cursor.fetchall()
@@ -350,6 +355,7 @@ class DBHelper:
             ) LIMIT 1;""".format(tableName, tableFields, newvalues, lookFor[0], lookFor[1], tableName, lookFor[0], item2look4[0], lookFor[1], item2look4[1])
                 multiple = True
 
+            print("insertValuesReturnID ----> ", query )
             if printQuery == True:
                 print(query)
 
