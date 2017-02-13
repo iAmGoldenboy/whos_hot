@@ -5,7 +5,7 @@ __datum__ = '29/01/17'
 
 from dbhelper import DBHelper
 from flask import Flask
-from flask import render_template
+from flask import render_template, url_for
 from flask import request
 from model import gettingRSSes
 import schedule
