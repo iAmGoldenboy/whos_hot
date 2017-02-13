@@ -22,11 +22,11 @@ DB = DBHelper()
 @app.route("/")
 def home():
     welcome = "Welcome to Python Flask Appss!"
-    return render_template("base.html", title=welcome)
+    return render_template("base.html", title=welcome, overviewTitle=welcome)
 
 @app.errorhandler(404)
 def page_not_found(error):
-    return render_template('base.html', title="Error".format(error)), 404
+    return render_template('base.html', title="Error {}".format(error), overviewTitle="Error {}".format(error)), 404
 
 @app.route("/allFeeds")
 def allFeeds():
