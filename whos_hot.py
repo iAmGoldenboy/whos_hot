@@ -91,7 +91,7 @@ def fetchafeeds():
             print("Trying to get soup")
             getLinkData = requests.get(article)
             soup = BeautifulSoup(getLinkData.content, "lxml")
-            print("Got soup", soup)
+            print("Got soup -> ", soup)
         except Exception as e:
             print("No soup", e)
 
