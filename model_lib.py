@@ -10,10 +10,11 @@ from time import sleep
 import random
 import string
 from model_nlp import scrubString, pruneNECollection
-from stats import quartiles
+
 import dbconfig
 from collections import Counter
 import json
+import numpy as np
 
 DB = DBHelper()
 
@@ -55,17 +56,22 @@ def URLSnotInDatabase(feeds):
 
                     ishere = DB.checkArticelLinkExistance(articleLink)
 
+                    try:
+                        if feedItem[1] == "Berlingske Tidende":
+                            print("       *** *** from BERL: ", articleLink)
+                            print("    dalink", articleLink, articleLink[:len(articleLink)-2])
+                            end = articleLink[len(articleLink)-2:]
+                            berlList = ["-0", "-1", "-2", "-3", "-4", "-5", "-6"]
+                            if end in berlList:
+                                articleLink = articleLink[:len(articleLink)-2]
+                    except Exception as e:
+                        articleLink = articleLink
+
+
                     if len(ishere) == 0 and articleLink not in seenlist:
                         # then add to list
                         print(" ---> is here", len(ishere), articleLink)
-                        try:
-                            if feedItem[1] == "Berlingske Tidende":
-                                # pass
-                                print("dalink", articleLink[:len(articleLink)-2])
-                                if articleLink[:len(articleLink)-2] in seenlist:
-                                    print("in seenssss", articleLink)
-                        except Exception as e:
-                            print("Berlingeren", articleLink)
+
                         URLs2scrape.append([articleLink, feedItem[1], feedItem[0]])
                         seenlist.append(articleLink)
 
@@ -227,7 +233,7 @@ def keepThoseAboveQuartile(bagname, outputQuartiles=False):
     if len(numlist) >= 3:
 
         try:
-            quarts = quartiles(numlist)
+            quarts = float(np.percentile(numlist, 25)), float(np.percentile(numlist, 50)), float(np.percentile(numlist, 75))
             okayedNE = {id:num for id, num in Counter(rePrune(bagname)).items() if num >= quarts[1]}
             if outputQuartiles == True:
                 return okayedNE, quarts
