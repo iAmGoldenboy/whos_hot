@@ -19,7 +19,7 @@
     <![endif]-->
     <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
     <!-- link rel="stylesheet" type="text/css" href="static/style/style.css" -->
-    <link rel="stylesheet" href=" {{ url_for('static', filename='style/style.css') }} ">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/style.css') }}">
     <title>{% if title %} {{ title }} {% endif %} - Who Hot</title>
     {% endblock %}
 
