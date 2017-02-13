@@ -99,7 +99,7 @@ def fetchafeeds():
         try:
             print("trying to get header")
             tagThing = ".article-header__title"
-            print("TH", type(tagThing))
+            print("TH", type(tagThing), tagThing)
             tagContent = soup.select(tagThing)
             tagContent_2 = soup.find_all(tagThing)
             print("tagcontent type", type(tagContent), tagContent_2)
