@@ -91,14 +91,17 @@ def fetchafeeds():
             print("Trying to get soup")
             getLinkData = requests.get(article)
             soup = BeautifulSoup(getLinkData.content, "lxml")
-            print("Got soup -> ", soup)
+            print("Got soup -> ", soup.original_encoding, type(soup))
+
         except Exception as e:
             print("No soup", e)
 
         try:
             print("trying to get header")
             tagContent = soup.select(".article-header__title")
-            headlines.append(tagContent)
+            print("tagcontent type", type(tagContent))
+            for item in tagContent:
+                headlines.append(tagContent)
             print("tagContent 1", tagContent)
         except Exception as e:
             print("No tags", e,)
