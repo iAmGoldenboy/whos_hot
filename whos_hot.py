@@ -113,7 +113,7 @@ def fetchafeeds():
             print("tagcontent type", type(tagContent), tagContent)
             for item in tagContent:
                 headlines.append(item.get_text().strip())
-                print("tagContent 1", tagContent.get_text().strip())
+                print("tagContent 1", item.get_text().strip())
         except Exception as e:
             print("No tags", e)
 
