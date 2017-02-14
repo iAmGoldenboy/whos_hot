@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-#!/usr/bin/env python3
 __author__ = 'Miklas Njor - iAmGoldenboy - http://miklasnjor.com'
 __projectname__ = 'whos_hot / model.py'
 __datum__ = '29/01/17'
