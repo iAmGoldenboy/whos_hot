@@ -118,16 +118,16 @@ def fetchafeeds():
                 print("tagContent 1", item.get_text().strip(), " as utf8 {} {} {} {} {}".format(  item.encode("utf-8"), item.encode("ascii"), item.encode("latin-1"), item.encode("iso-8859-1"), item.encode("UTF-16") ) )
                 # item = item.get_text().strip()
                 try:
-                    print("test2", item.encode('ascii').decode("utf-8"))
+                    print("test2", item.get_text().strip().encode('ascii').decode("utf-8"))
                 except Exception as e:
                     print("test2 err", e)
                 try:
-                    print("test3", item.encode('ascii').decode("latin-1"))
+                    print("test3", item.get_text().strip().encode('ascii').decode("latin-1"))
                 except Exception as e:
                     print("test3 err", e)
 
                 try:
-                    print("test4", item.encode('ascii').decode("iso-8859-1"))
+                    print("test4", item.get_text().strip().encode('ascii').decode("iso-8859-1"))
                 except Exception as e:
                     print("test4 err", e)
                 # print("tagContent 1 as utf8 {} {} {} {} {}".format(  item.decode("utf-8"), item.decode("ascii"), item.decode("latin-1"), item.decode("iso-8859-1"), item.decode("UTF-16") ) )
