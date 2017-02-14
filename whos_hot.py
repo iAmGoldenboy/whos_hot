@@ -117,7 +117,7 @@ def fetchafeeds():
                 headlines.append(item.get_text().strip())
                 # print("tagContent 1", item.get_text().strip(), " as utf8 {} {} {} {} {}".format(  item.encode("utf-8"), item.encode("ascii"), item.encode("latin-1"), item.encode("iso-8859-1"), item.encode("UTF-16") ) )
                 item = item.get_text().strip()
-                print("mian item", item.encode(encoding='utf-8'))
+                print("mian item", item.encode(encoding='utf-8').decode("latin-1"))
                 headlines.append(item.encode(encoding='utf-8'))
                 try:
                     print("test2", item.encode('ascii').decode("utf-8"))
