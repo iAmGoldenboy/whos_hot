@@ -116,8 +116,9 @@ def fetchafeeds():
             for item in tagContent:
                 headlines.append(item.get_text().strip())
                 print("tagContent 1", item.get_text().strip(), " as utf8 {} {} {} {} {}".format(  item.decode("utf-8"), item.decode("ascii"), item.decode("latin-1"), item.decode("iso-8859-1"), item.decode("UTF-16") ) )
-                item = item.get_text().strip()
-                print("tagContent 1 as utf8 {} {} {} {} {}".format(  item.decode("utf-8"), item.decode("ascii"), item.decode("latin-1"), item.decode("iso-8859-1"), item.decode("UTF-16") ) )
+                # item = item.get_text().strip()
+                print("test2", item.encode('ascii').decode("utf-8"))
+                # print("tagContent 1 as utf8 {} {} {} {} {}".format(  item.decode("utf-8"), item.decode("ascii"), item.decode("latin-1"), item.decode("iso-8859-1"), item.decode("UTF-16") ) )
         except Exception as e:
             print("No tags", e)
 
