@@ -91,7 +91,7 @@ def fetchafeeds():
             # print("article link", articleLink)
             knowarticles.append(articleLink)
 
-    print("knownarticles 1", knowarticles)
+    # print("knownarticles 1", knowarticles)
 
     headlines = []
     for article in knowarticles[:5]:
@@ -99,7 +99,7 @@ def fetchafeeds():
         try:
             # print("Trying to get soup")
             getLinkData = requests.get(article)
-            soup = BeautifulSoup(getLinkData.content, "lxml")
+            soup = BeautifulSoup(getLinkData.content, "lxml", from_encoding="utf-8")
             print("original encoding", soup.original_encoding )
             # print("Got soup -> ", soup.original_encoding, type(soup))
             # if len(soup) > 1000:
@@ -118,6 +118,7 @@ def fetchafeeds():
                 # print("tagContent 1", item.get_text().strip(), " as utf8 {} {} {} {} {}".format(  item.encode("utf-8"), item.encode("ascii"), item.encode("latin-1"), item.encode("iso-8859-1"), item.encode("UTF-16") ) )
                 item = item.get_text().strip()
                 print("mian item", item.encode(encoding='utf-8').decode("latin-1"))
+                print("mian item", item.encode(encoding='utf-8').decode("iso-8859-1"))
                 headlines.append(item.encode(encoding='utf-8'))
                 try:
                     print("test2", item.encode('ascii').decode("utf-8"))
