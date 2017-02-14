@@ -99,7 +99,7 @@ def fetchafeeds():
         try:
             # print("Trying to get soup")
             getLinkData = requests.get(article)
-            soup = BeautifulSoup(getLinkData.content, "lxml", from_encoding="utf-8")
+            soup = BeautifulSoup(getLinkData.content, "lxml", from_encoding="iso-8859-1")
             print("original encoding", soup.original_encoding, soup )
             # print("Got soup -> ", soup.original_encoding, type(soup))
             # if len(soup) > 1000:
