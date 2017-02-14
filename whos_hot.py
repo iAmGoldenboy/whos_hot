@@ -302,7 +302,7 @@ if __name__ == "__main__":
     # t = Thread(target=runningSchedule)
     # t.start()
     # print("Start time: " + str(start_time))
-    app.run(debug=True)
+    app.run()
 
 
 
