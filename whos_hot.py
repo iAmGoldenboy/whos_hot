@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#!/usr/bin/env python3
 from dbhelper import DBHelper
 from flask import Flask
 from flask import render_template, url_for
@@ -43,11 +45,11 @@ def page_not_found(error):
 @app.route("/allFeeds")
 def allFeeds():
     feeds = []
-    try:
-        feeds = DB.getRSSlinks()
-    except Exception as e:
-        print("feed error: ", e)
-        feeds = None
+    # try:
+    #     feeds = DB.getRSSlinks()
+    # except Exception as e:
+    #     print("feed error: ", e)
+    #     feeds = None
     # myline = "whats up"
     return render_template("feeds/allFeeds.html", data=feeds, title="RSS Feeds", overviewTitle="RSS Feeds i systemet")
 
