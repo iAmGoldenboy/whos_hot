@@ -8,6 +8,7 @@ from flask import Flask
 from flask import render_template, url_for
 from flask import request
 from bs4 import BeautifulSoup
+from bs4 import SoupStrainer
 import requests
 import xmltodict
 from model import gettingRSSes
@@ -99,6 +100,7 @@ def fetchafeeds():
             # print("Trying to get soup")
             getLinkData = requests.get(article)
             soup = BeautifulSoup(getLinkData.content, "lxml")
+            print("original encoding", soup.original_encoding )
             # print("Got soup -> ", soup.original_encoding, type(soup))
             # if len(soup) > 1000:
             #     print("SOUP ----> ", soup[int(len(soup)/3):int(len(soup)/2)] )
@@ -113,7 +115,7 @@ def fetchafeeds():
             print("tagcontent type", type(tagContent), tagContent)
             for item in tagContent:
                 headlines.append(item.get_text().strip())
-                print("tagContent 1", item.get_text().strip(), item.encode("utf-8"))
+                print("tagContent 1", item.get_text().strip(), " as utf8 {} {} {} {} {}".format(  item.encode("utf-8"), item.encode("ascii"), item.encode("latin-1"), item.encode("iso-8859-1"), item.encode("UTF-16") ) )
         except Exception as e:
             print("No tags", e)
 
