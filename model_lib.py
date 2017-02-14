@@ -1,8 +1,3 @@
-# -*- coding: utf-8 -*-
-__author__ = 'Miklas Njor - iAmGoldenboy - http://miklasnjor.com'
-__projectname__ = 'whos_hot / model_lib.py'
-__datum__ = '10/02/17'
-
 from dbhelper import DBHelper
 import requests
 import xmltodict

@@ -1,8 +1,3 @@
-# -*- coding: utf-8 -*-
-__author__ = 'Miklas Njor - iAmGoldenboy - http://miklasnjor.com'
-__projectname__ = 'whos_hot / whos_hot.py'
-__datum__ = '29/01/17'
-
 from dbhelper import DBHelper
 from flask import Flask
 from flask import render_template, url_for
@@ -47,6 +42,7 @@ def page_not_found(error):
 
 @app.route("/allFeeds")
 def allFeeds():
+    feeds = []
     try:
         feeds = DB.getRSSlinks()
     except Exception as e:

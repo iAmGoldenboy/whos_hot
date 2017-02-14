@@ -1,8 +1,3 @@
-# -*- coding: utf-8 -*-
-__author__ = 'Miklas Njor - iAmGoldenboy - http://miklasnjor.com'
-__projectname__ = 'whos_hot / dbhelper.py'
-__datum__ = '29/01/17'
-
 import pymysql
 import dbconfig
 import datetime
