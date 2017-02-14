@@ -91,7 +91,7 @@ def fetchafeeds():
             # print("article link", articleLink)
             knowarticles.append(articleLink)
 
-    # print("knownarticles 1", knowarticles)
+    print("knownarticles 1", knowarticles)
 
     headlines = []
     for article in knowarticles[:5]:
