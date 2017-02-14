@@ -87,7 +87,7 @@ def fetchafeeds():
 
         for rssItem in feedsDict["rss"]["channel"]["item"]:
             articleLink = rssItem["link"].replace("?referrer=RSS", "")
-            print("article link", articleLink)
+            # print("article link", articleLink)
             knowarticles.append(articleLink)
 
     print("knownarticles 1", knowarticles)
@@ -96,26 +96,26 @@ def fetchafeeds():
     for article in knowarticles:
         soup=""
         try:
-            print("Trying to get soup")
+            # print("Trying to get soup")
             getLinkData = requests.get(article)
-            soup = BeautifulSoup(getLinkData.content, "html5lib")
-            print("Got soup -> ", soup.original_encoding, type(soup))
+            soup = BeautifulSoup(getLinkData.content, "lxml")
+            # print("Got soup -> ", soup.original_encoding, type(soup))
+            if len(soup) > 1000:
+                print("SOUP ----> ", soup[int(len(soup)/3):int(len(soup)/2)] )
 
         except Exception as e:
             print("No soup", e)
 
         try:
             print("trying to get header")
-            tagThing = ".article-header__title"
-            print("TH", type(tagThing), tagThing)
+            tagThing = "h1"
             tagContent = soup.select(tagThing)
-            tagContent_2 = soup.find_all(tagThing)
-            print("tagcontent type", type(tagContent), tagContent_2)
+            print("tagcontent type", type(tagContent))
             for item in tagContent:
                 headlines.append(tagContent)
-            print("tagContent 1", tagContent)
+                print("tagContent 1", tagContent)
         except Exception as e:
-            print("No tags", e,)
+            print("No tags", e)
 
         sleep(3)
 
