@@ -66,7 +66,7 @@ def fetchafeeds():
         print("feed error: ", e)
         feeds = None
 
-    output = [feed for feed in feeds[:2]]
+    output = [feed for feed in feeds]
 
     print("output 1", output)
 
