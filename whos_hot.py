@@ -18,6 +18,12 @@ import html5lib
 from model_lib import URLSnotInDatabase
 import time
 
+from dbconfig import setNLTKdataLink
+
+if len(setNLTKdataLink()) > 0:
+    #  http://stackoverflow.com/questions/13965823/resource-corpora-wordnet-not-found-on-heroku/37558445#37558445
+    # nltk.data.path.append(setNLTKdataLink())
+    print("link to path: ", setNLTKdataLink())
 
 app = Flask(__name__, static_folder='static')
 start_time = time.time()
