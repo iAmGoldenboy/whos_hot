@@ -14,11 +14,11 @@ connection = pymysql.connect(host='localhost',
 
 try:
     with connection.cursor() as cursor:
-        try:
-            sql = "CREATE DATABASE IF NOT EXISTS NE_database;"
-            cursor.execute(sql)
-        except Exception as e:
-            print("Cant create database due to: ", e)
+        # try:
+        #     sql = "CREATE DATABASE IF NOT EXISTS NE_database;"
+        #     cursor.execute(sql)
+        # except Exception as e:
+        #     print("Cant create database due to: ", e)
 
         try:
             sql = """CREATE TABLE IF NOT EXISTS NE_database.rss_feeds (

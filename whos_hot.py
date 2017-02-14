@@ -13,6 +13,7 @@ import xmltodict
 from model import gettingRSSes
 import schedule
 from time import sleep
+import html5lib
 
 from model_lib import URLSnotInDatabase
 import time
@@ -90,7 +91,7 @@ def fetchafeeds():
         try:
             print("Trying to get soup")
             getLinkData = requests.get(article)
-            soup = BeautifulSoup(getLinkData.content, "lxml")
+            soup = BeautifulSoup(getLinkData.content, "html5lib")
             print("Got soup -> ", soup.original_encoding, type(soup))
 
         except Exception as e:
