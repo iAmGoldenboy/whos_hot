@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+#!/usr/bin/env python3
 __author__ = 'Miklas Njor - iAmGoldenboy - http://miklasnjor.com'
 __projectname__ = 'whos_hot / model_nlp.py'
 __datum__ = '31/01/17'
