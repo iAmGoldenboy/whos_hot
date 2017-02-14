@@ -59,87 +59,90 @@ def allFeeds():
 def fetchafeeds():
 
     output = "hej"
-
-    feeds = None
-    try:
-        feeds = DB.getRSSlinks()
-    except Exception as e:
-        print("feed error: ", e)
-        feeds = None
-
-    output = [feed for feed in feeds if "politiken.dk" in feed[0]]
-
-    print("output 1", output)
-
-    lookat = []
-    for out in output:
-        articleLink = out[0]
-        avis = out[1]
-        sektion = out[2]
-        lookat.append([articleLink, avis, sektion])
-
-    print("Lookat 1", lookat)
-
-    knowarticles = []
-    for look in lookat:
-        feedR = requests.get(look[0])
-        feedsDict = xmltodict.parse(feedR.content, process_namespaces=True)
-        sleep(2)
-
-        for rssItem in feedsDict["rss"]["channel"]["item"]:
-            articleLink = rssItem["link"].replace("?referrer=RSS", "")
-            # print("article link", articleLink)
-            knowarticles.append(articleLink)
-
-    print("knownarticles 1", knowarticles)
-
     headlines = []
-    for article in knowarticles[:5]:
-        soup=""
-        try:
-            # print("Trying to get soup")
-            getLinkData = requests.get(article)
-            soup = BeautifulSoup(getLinkData.content, "lxml", from_encoding="iso-8859-1")
-            print("original encoding", soup.original_encoding, soup )
-            # print("Got soup -> ", soup.original_encoding, type(soup))
-            # if len(soup) > 1000:
-            #     print("SOUP ----> ", soup[int(len(soup)/3):int(len(soup)/2)] )
+    lookat = []
+    knowarticles = []
 
-        except Exception as e:
-            print("No soup", e)
-
-        try:
-            print("trying to get header")
-            tagThing = ".article__title"
-            tagContent = soup.select(tagThing)
-            print("tagcontent type", type(tagContent), tagContent)
-            for item in tagContent:
-                headlines.append(item.get_text().strip())
-                # print("tagContent 1", item.get_text().strip(), " as utf8 {} {} {} {} {}".format(  item.encode("utf-8"), item.encode("ascii"), item.encode("latin-1"), item.encode("iso-8859-1"), item.encode("UTF-16") ) )
-                item = item.get_text().strip()
-                print("mian item", item.encode(encoding='utf-8').decode("latin-1"))
-                print("mian item", item.encode(encoding='utf-8').decode("iso-8859-1"))
-                headlines.append(item.encode(encoding='utf-8'))
-                try:
-                    print("test2", item.encode('ascii').decode("utf-8"))
-                except Exception as e:
-                    print("test2 err", e)
-                try:
-                    print("test3", item.encode('ascii').decode("latin-1"))
-                except Exception as e:
-                    print("test3 err", e)
-
-                try:
-                    print("test4", item.encode('ascii').decode("iso-8859-1"))
-                except Exception as e:
-                    print("test4 err", e)
-                # print("tagContent 1 as utf8 {} {} {} {} {}".format(  item.decode("utf-8"), item.decode("ascii"), item.decode("latin-1"), item.decode("iso-8859-1"), item.decode("UTF-16") ) )
-        except Exception as e:
-            print("No tags", e)
-
-        sleep(3)
-
-    print("Headlines 1", headlines)
+    # feeds = None
+    # try:
+    #     feeds = DB.getRSSlinks()
+    # except Exception as e:
+    #     print("feed error: ", e)
+    #     feeds = None
+    #
+    # output = [feed for feed in feeds if "politiken.dk" in feed[0]]
+    #
+    # print("output 1", output)
+    #
+    # lookat = []
+    # for out in output:
+    #     articleLink = out[0]
+    #     avis = out[1]
+    #     sektion = out[2]
+    #     lookat.append([articleLink, avis, sektion])
+    #
+    # print("Lookat 1", lookat)
+    #
+    # knowarticles = []
+    # for look in lookat:
+    #     feedR = requests.get(look[0])
+    #     feedsDict = xmltodict.parse(feedR.content, process_namespaces=True)
+    #     sleep(2)
+    #
+    #     for rssItem in feedsDict["rss"]["channel"]["item"]:
+    #         articleLink = rssItem["link"].replace("?referrer=RSS", "")
+    #         # print("article link", articleLink)
+    #         knowarticles.append(articleLink)
+    #
+    # print("knownarticles 1", knowarticles)
+    #
+    # headlines = []
+    # for article in knowarticles[:5]:
+    #     soup=""
+    #     try:
+    #         # print("Trying to get soup")
+    #         getLinkData = requests.get(article)
+    #         soup = BeautifulSoup(getLinkData.content, "lxml", from_encoding="iso-8859-1")
+    #         print("original encoding", soup.original_encoding, soup )
+    #         # print("Got soup -> ", soup.original_encoding, type(soup))
+    #         # if len(soup) > 1000:
+    #         #     print("SOUP ----> ", soup[int(len(soup)/3):int(len(soup)/2)] )
+    #
+    #     except Exception as e:
+    #         print("No soup", e)
+    #
+    #     try:
+    #         print("trying to get header")
+    #         tagThing = ".article__title"
+    #         tagContent = soup.select(tagThing)
+    #         print("tagcontent type", type(tagContent), tagContent)
+    #         for item in tagContent:
+    #             headlines.append(item.get_text().strip())
+    #             # print("tagContent 1", item.get_text().strip(), " as utf8 {} {} {} {} {}".format(  item.encode("utf-8"), item.encode("ascii"), item.encode("latin-1"), item.encode("iso-8859-1"), item.encode("UTF-16") ) )
+    #             item = item.get_text().strip()
+    #             print("mian item", item.encode(encoding='utf-8').decode("latin-1"))
+    #             print("mian item", item.encode(encoding='utf-8').decode("iso-8859-1"))
+    #             headlines.append(item.encode(encoding='utf-8'))
+    #             try:
+    #                 print("test2", item.encode('ascii').decode("utf-8"))
+    #             except Exception as e:
+    #                 print("test2 err", e)
+    #             try:
+    #                 print("test3", item.encode('ascii').decode("latin-1"))
+    #             except Exception as e:
+    #                 print("test3 err", e)
+    #
+    #             try:
+    #                 print("test4", item.encode('ascii').decode("iso-8859-1"))
+    #             except Exception as e:
+    #                 print("test4 err", e)
+    #             # print("tagContent 1 as utf8 {} {} {} {} {}".format(  item.decode("utf-8"), item.decode("ascii"), item.decode("latin-1"), item.decode("iso-8859-1"), item.decode("UTF-16") ) )
+    #     except Exception as e:
+    #         print("No tags", e)
+    #
+    #     sleep(3)
+    #
+    # print("Headlines 1", headlines)
 
 
 
