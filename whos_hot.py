@@ -66,7 +66,7 @@ def fetchafeeds():
         print("feed error: ", e)
         feeds = None
 
-    output = [feed for feed in feeds]
+    output = [feed for feed in feeds if "politiken.dk" in feed[0]]
 
     print("output 1", output)
 
@@ -93,27 +93,27 @@ def fetchafeeds():
     print("knownarticles 1", knowarticles)
 
     headlines = []
-    for article in knowarticles:
+    for article in knowarticles[:5]:
         soup=""
         try:
             # print("Trying to get soup")
             getLinkData = requests.get(article)
             soup = BeautifulSoup(getLinkData.content, "lxml")
             # print("Got soup -> ", soup.original_encoding, type(soup))
-            if len(soup) > 1000:
-                print("SOUP ----> ", soup[int(len(soup)/3):int(len(soup)/2)] )
+            # if len(soup) > 1000:
+            #     print("SOUP ----> ", soup[int(len(soup)/3):int(len(soup)/2)] )
 
         except Exception as e:
             print("No soup", e)
 
         try:
             print("trying to get header")
-            tagThing = "h1"
+            tagThing = ".article__title"
             tagContent = soup.select(tagThing)
-            print("tagcontent type", type(tagContent))
+            print("tagcontent type", type(tagContent), tagContent)
             for item in tagContent:
-                headlines.append(tagContent)
-                print("tagContent 1", tagContent)
+                headlines.append(item.get_text().strip())
+                print("tagContent 1", tagContent.get_text().strip())
         except Exception as e:
             print("No tags", e)
 
