@@ -20,6 +20,8 @@ from dbconfig import setNLTKdataLink
 
 if len(setNLTKdataLink()) > 0:
     #  http://stackoverflow.com/questions/13965823/resource-corpora-wordnet-not-found-on-heroku/37558445#37558445
+    who = setNLTKdataLink()
+    print("who", who)
     nltk.data.path.append(setNLTKdataLink())
     print("link to path3: ", nltk.data.path.append(setNLTKdataLink()))
 
